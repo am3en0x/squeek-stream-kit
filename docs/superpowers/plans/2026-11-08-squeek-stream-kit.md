@@ -56,7 +56,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test test/"
+    "test": "node --test \"test/*.test.js\""
   }
 }
 ```
