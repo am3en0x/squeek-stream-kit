@@ -41,8 +41,8 @@ All overlay pages have a transparent background and size themselves to the brows
 1. **`board.html`**: the LED dot-matrix board on a black plate.
    - Rows: his state (`SQUEEKTOSHI IS RUNNING`, `IS NAPPING`, `IS OFF AIR`), `TODAY` distance in km (from
      `distanceMm`), speed in km/h, Squeek block height with a progress bar of dots.
-   - `layout=full` (default, about 16:9) or `layout=strip` (one line: state, today, speed, block), for a corner or a
-     lower third.
+   - `layout=full` (default, 110 x 66 dots, source 880 x 528) or `layout=strip` (two lines: state, then today and
+     speed; 178 x 20 dots, source 890 x 100), for a corner or a lower third.
    - A dot wheel turns at the real RPM while he runs, stands still while he naps.
 2. **`alerts.html`**: empty until something happens, then one alert at a time slides in as an LED card with a short
    chiptune sound made with Web Audio (no audio files), holds, and slides out.
@@ -60,7 +60,7 @@ All overlay pages have a transparent background and size themselves to the brows
 | --- | --- | --- |
 | Wake up | the wheel moves (`freshness` online and `rpmMilli > 0`) on two polls in a row after at least 3 minutes still | on |
 | Nap | the wheel has been still for 3 minutes after running | on |
-| Zoomies | speed at or above the zoomies threshold (default 6 km/h) on two polls in a row; not again until it has dropped below 80% of the threshold for 2 minutes | on |
+| Zoomies | speed at or above the zoomies threshold (default 4.5 km/h: he usually runs about 4 km/h and his record is 5.2 km/h) on two polls in a row; not again until it has stayed below 80% of the threshold for 2 minutes | on |
 | Block found | `system.settlement_completed` with `completedBlockCount > 0` (one alert per settlement, naming the newest block) | on |
 | Top speed | `measurement.speed_record` | on |
 | Distance | `measurement.distance_milestone` and `measurement.daily_distance_milestone` | on |
@@ -81,8 +81,8 @@ All overlay pages have a transparent background and size themselves to the brows
 | --- | --- | --- |
 | `theme` | `amber`, `green`, `ice`, `white` (LED color) | `amber` |
 | `layout` | `full`, `strip` (board only) | `full` |
-| `alerts` | comma list of `wake,nap,zoomies,block,record,distance,streak,merge` | all but `merge` |
-| `zoomies` | km/h threshold, 1 to 20 | `6` |
+| `alerts` | comma list of `wake,nap,zoomies,block,record,distance,streak,merge`, or `none` | all but `merge` |
+| `zoomies` | km/h threshold, 1 to 10 | `4.5` |
 | `sound` | `0` or `1` | `1` |
 | `vol` | 0 to 100 | `60` |
 | `dur` | alert seconds, 3 to 15 | `6` |
@@ -95,7 +95,7 @@ Unknown or out-of-range values fall back to the default.
 Pure logic is separate from the DOM so it can be tested in Node:
 
 - `dist/js/params.js`: parse and clamp URL options.
-- `dist/js/api.js`: fetch with timeout, `Retry-After`, ETag reuse, and "unavailable" handling; returns plain objects.
+- `dist/js/api.js`: fetch with timeout, `Retry-After` and "unavailable" handling (the browser's HTTP cache reuses ETags); returns plain objects.
 - `dist/js/wheel.js`: the status machine (running, napping, off air, zoomies with hysteresis) from successive status
   readings and timestamps; emits wake / nap / zoomies.
 - `dist/js/feed.js`: seen-id tracking, mapping feed items to alerts and ticker lines, number and time formatting.
