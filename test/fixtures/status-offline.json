@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 3,
+  "generatedAt": "2026-11-06T18:06:25.596Z",
+  "measurement": {
+    "freshness": "stale",
+    "coreStatus": "IDLE",
+    "rpmMilli": 51000,
+    "speedMmPerSecond": 900,
+    "distanceMm": 0
+  },
+  "builder": { "status": "available", "anchor": { "blockHeight": "1140", "blockProgress": "662790326", "settledThroughRound": "421" } }
+}

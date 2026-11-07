@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 3,
+  "generatedAt": "2026-11-04T23:39:12.000Z",
+  "measurement": {
+    "freshness": "online",
+    "observedAt": "2026-11-04T23:39:10.837Z",
+    "staleAfterSeconds": 120,
+    "cumulativeWorkUnits": "26009",
+    "provenance": "hardware",
+    "coreStatus": "ACTIVE",
+    "rpmMilli": 77005,
+    "speedMmPerSecond": 1127,
+    "distanceMm": 3455808
+  },
+  "builder": {
+    "status": "available",
+    "anchor": {
+      "cumulativeWork": "25701",
+      "blockHeight": "2366",
+      "blockProgress": "143705150",
+      "settledThroughRound": "166"
+    }
+  }
+}
