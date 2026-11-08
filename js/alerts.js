@@ -31,8 +31,14 @@ function draw(a) {
   led.grid(COLS, ROWS)
   for (let x = 0; x < COLS; x++) { led.dot(x, 0, COLORS.dim); led.dot(x, ROWS - 1, COLORS.dim) }
   for (let y = 0; y < ROWS; y++) { led.dot(0, y, COLORS.dim); led.dot(COLS - 1, y, COLORS.dim) }
-  const k = textWidth(a.title, 2) <= COLS - 8 ? 2 : 1
-  led.text(a.title, Math.floor((COLS - textWidth(a.title, k)) / 2), k === 2 ? 4 : 8, accent, k)
+  // the pictogram and the title as one centred line, the detail under them
+  const k = textWidth(a.title, 2) + 18 <= COLS - 8 ? 2 : 1
+  const iconW = 8 * k
+  const w = textWidth(a.title, k) + iconW + k
+  let x = Math.floor((COLS - w) / 2)
+  const y = k === 2 ? 4 : 8
+  x = led.icon(a.kind, x, y, COLORS.cream, k) + k
+  led.text(a.title, x, y, accent, k)
   led.text(a.detail, Math.floor((COLS - textWidth(a.detail, 1)) / 2), 21, COLORS.cream)
   led.paint()
   card.setAttribute('aria-label', `${a.title}. ${a.detail}`)
