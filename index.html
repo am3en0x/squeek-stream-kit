@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Squeek Stream Kit</title>
-  <meta name="description" content="Free OBS and Streamlabs overlays for Squeekchain streams: Squeektoshi's live wheel on an LED board, alerts for wake-ups, zoomies, blocks and records, a round ticker and a second-screen page.">
+  <meta name="description" content="Free OBS and Streamlabs overlays and a viewer game for Squeekchain streams: Squeektoshi's live wheel on an LED board, alerts, a round ticker, Round Call with Twitch chat, stream goals, a cam frame and scenes.">
   <meta name="theme-color" content="#000000">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
@@ -16,6 +16,7 @@
       <a class="brand" href="#top"><img src="favicon.svg" alt="" width="28" height="28">Squeek Stream Kit</a>
       <nav class="nav" aria-label="Sections">
         <a href="#setup">Setup</a>
+        <a href="#companion">Round Call</a>
         <a href="#obs">OBS</a>
         <a href="#alerts">Alerts</a>
         <a href="watch.html">Watch</a>
@@ -27,10 +28,11 @@
   <main id="top">
     <section class="wrap hero" aria-labelledby="hero-h">
       <div>
-        <p class="label">Squeekchain Genesis · stream overlays</p>
+        <p class="label">Squeekchain Genesis · stream companion</p>
         <h1 id="hero-h">Put Squeektoshi on your stream</h1>
-        <p class="lead">An LED board of the hamster's wheel, alerts when he wakes up, gets the zoomies or a block is found, and a
-          round ticker for your lower third. Browser sources for OBS and Streamlabs, free, no account, no key.</p>
+        <p class="lead">An LED board of the hamster's wheel, alerts when he wakes up, gets the zoomies or finds a block, a round
+          ticker, stream goals, a cam frame, scenes, and Round Call: your chat calls what he does next round and the real
+          wheel settles it. Browser sources for OBS and Streamlabs, free, no account, no key.</p>
         <div class="actions">
           <a class="btn solid" href="#setup">Get your overlay links</a>
           <a class="btn" href="watch.html">Watch the stream with them</a>
@@ -39,8 +41,10 @@
       </div>
       <div class="stage" id="hero-stage">
         <span class="tag">Your stream</span>
-        <div class="slot" data-src="board.html?demo=1" data-w="880" data-h="528" style="left: 4%; top: 6%; width: 42%;"></div>
-        <div class="slot" data-src="alerts.html?demo=1&amp;sound=0" data-w="1000" data-h="150" style="left: 50%; top: 52%; width: 46%;"></div>
+        <div class="slot" data-src="board.html?demo=1" data-w="880" data-h="528" style="left: 3%; top: 6%; width: 40%;"></div>
+        <div class="slot" data-src="goal.html?demo=1&amp;goal=km:5" data-w="1000" data-h="160" style="left: 48%; top: 6%; width: 49%;"></div>
+        <div class="slot" data-src="call.html?demo=1&amp;chat=hamcam&amp;sound=0" data-w="1056" data-h="300" style="left: 48%; top: 25%; width: 49%;"></div>
+        <div class="slot" data-src="alerts.html?demo=1&amp;sound=0" data-w="1000" data-h="150" style="left: 26%; top: 68%; width: 48%;"></div>
         <div class="slot" data-src="ticker.html?demo=1" data-w="1920" data-h="72" style="left: 0; bottom: 0; width: 100%;"></div>
       </div>
     </section>
@@ -68,9 +72,65 @@
               <label class="chip"><input type="checkbox" id="sound"><span>Sound on</span></label>
               <label class="chip"><input type="checkbox" id="demo"><span>Demo data in OBS</span></label>
             </div>
+
+            <p class="label form-sep">Companion</p>
+            <label class="field"><span class="label">Twitch channel for Round Call</span>
+              <input class="text" type="text" id="chat" inputmode="text" autocomplete="off" spellcheck="false" placeholder="your channel name">
+              <span class="fine">Read only, no login. Viewers type !nap, !jog or !zoomies. Leave empty without Twitch.</span></label>
+            <div class="field"><span class="label">Stream goal</span>
+              <span class="pair"><select id="goalKind" aria-label="Goal kind"><option value="km">km on the wheel</option><option value="blocks">blocks found</option><option value="run">minutes running</option></select>
+              <input class="text" type="number" id="goalN" min="0.5" step="0.5" value="5" aria-label="Goal target"></span></div>
+            <label class="field"><span class="label">Count since (UTC, optional)</span>
+              <input class="text" type="text" id="since" inputmode="numeric" placeholder="21:00" autocomplete="off">
+              <span class="fine">When your stream started. Empty counts from the moment the source loads.</span></label>
+            <label class="field"><span class="label">Name on the cam frame</span>
+              <input class="text" type="text" id="name" maxlength="24" autocomplete="off" placeholder="Ham Cam"></label>
+            <label class="field"><span class="label">Cam frame size</span>
+              <select id="size"><option>640x360</option><option>800x450</option><option>960x540</option><option>1280x720</option></select></label>
+            <label class="field"><span class="label">Stream starts at (UTC, optional)</span>
+              <input class="text" type="text" id="at" inputmode="numeric" placeholder="21:00" autocomplete="off">
+              <span class="fine">A countdown on the Starting soon scene.</span></label>
             <p class="fine">Previews run on sample data. The links use the real wheel unless "Demo data in OBS" is on.</p>
           </form>
-          <div class="outputs" id="outputs"></div>
+          <div class="outputs">
+            <h3 class="group-h">Overlays</h3>
+            <div class="outputs-group" id="outputs-overlays"></div>
+            <h3 class="group-h" id="companion">Round Call, goals, frame and scenes</h3>
+            <p class="group-lead">Round Call is the game: during each 10-minute Squeekchain round your viewers call what Squeektoshi
+              does in the next one. With a Twitch channel the overlay tallies the chat's calls, shows the result and keeps a
+              leaderboard for the stream; without one, viewers play on the <a href="live.html">second screen</a> and the
+              <a href="watch.html">watch page</a>.</p>
+            <div class="outputs-group" id="outputs-companion"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="viewers" aria-labelledby="viewers-h">
+      <div class="wrap">
+        <h2 id="viewers-h">For your viewers</h2>
+        <div class="cols">
+          <div>
+            <h3>Second screen</h3>
+            <p>A page for a phone next to the stream: the LED board, the round clock, Round Call and the latest events on
+              Squeekchain. Share <code>live.html</code>.</p>
+          </div>
+          <div>
+            <h3>Watch page</h3>
+            <p>Squeekchain's own livestream with the board, alerts and ticker on top, and Round Call under it. Share
+              <code>watch.html?youtube=…</code>, <code>?twitch=…</code> or <code>?x=…</code>.</p>
+          </div>
+          <div>
+            <h3>Chat commands</h3>
+            <table class="tight">
+              <tbody>
+                <tr><td><code>!nap</code></td><td>the wheel will not turn next round</td></tr>
+                <tr><td><code>!jog</code></td><td>he runs, under the zoomies mark</td></tr>
+                <tr><td><code>!zoomies</code></td><td>two readings at or over it (3 points)</td></tr>
+                <tr><td><code>!squeek</code></td><td>a cheer: the Round Call overlay flashes</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
@@ -81,8 +141,9 @@
         <ol class="steps">
           <li>Copy a link above.</li>
           <li>In OBS: Sources, +, Browser. In Streamlabs: Add Source, Browser Source. Paste the link as the URL.</li>
-          <li>Set the width and height shown next to the link. Leave the custom CSS empty: the pages are already transparent.</li>
-          <li>For alert sounds tick "Control audio via OBS", and untick "Shutdown source when not visible".</li>
+          <li>Set the width and height shown next to the link. Leave the custom CSS empty: the pages are already transparent
+            (the scenes are full dark screens on purpose).</li>
+          <li>For sounds tick "Control audio via OBS", and untick "Shutdown source when not visible".</li>
         </ol>
       </div>
     </section>
@@ -101,6 +162,7 @@
             <tr><td>Distance</td><td>Lifetime and daily distance milestones.</td></tr>
             <tr><td>Streak</td><td>Days in a row over 5 km.</td></tr>
             <tr><td>Merge</td><td>Someone merges two Squeeks (off by default).</td></tr>
+            <tr><td>Goal reached</td><td>The stream goal bar fills up (on the goal overlay itself).</td></tr>
           </tbody>
         </table>
         <p class="fine">Readings come from Squeekchain's public API every 5 seconds, the event feed every 15. Reloading a
@@ -111,7 +173,7 @@
 
   <footer class="foot">
     <div class="wrap">
-      <span>Squeek Stream Kit. Built for the <a href="https://squeekchain.com/genesis/code" target="_blank" rel="noopener">Squeekchain Genesis Code Lane</a>. Not affiliated with Squeekchain.</span>
+      <span>Squeek Stream Kit. Built for the <a href="https://squeekchain.com/genesis/code" target="_blank" rel="noopener">Squeekchain Genesis Code Lane</a>. Not affiliated with Squeekchain or Twitch.</span>
       <span><a href="https://github.com/am3en0x/squeek-stream-kit" target="_blank" rel="noopener">Source</a> · <a href="https://docs.squeekchain.com/developers/api/" target="_blank" rel="noopener">Squeekchain API</a></span>
     </div>
   </footer>
