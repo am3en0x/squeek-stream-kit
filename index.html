@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en" class="site">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Squeek Stream Kit</title>
+  <meta name="description" content="Free OBS and Streamlabs overlays for Squeekchain streams: Squeektoshi's live wheel on an LED board, alerts for wake-ups, zoomies, blocks and records, a round ticker and a second-screen page.">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/kit.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="wrap">
+      <a class="brand" href="#top"><img src="favicon.svg" alt="" width="28" height="28">Squeek Stream Kit</a>
+      <nav class="nav" aria-label="Sections">
+        <a href="#setup">Setup</a>
+        <a href="#obs">OBS</a>
+        <a href="#alerts">Alerts</a>
+        <a href="live.html">Second screen</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="wrap hero" aria-labelledby="hero-h">
+      <div>
+        <p class="label">Squeekchain Genesis · stream overlays</p>
+        <h1 id="hero-h">Put Squeektoshi on your stream</h1>
+        <p class="lead">An LED board of the hamster's wheel, alerts when he wakes up, gets the zoomies or a block is found, and a
+          round ticker for your lower third. Browser sources for OBS and Streamlabs, free, no account, no key.</p>
+        <div class="actions">
+          <a class="btn solid" href="#setup">Get your overlay links</a>
+          <a class="btn" href="live.html">Open the second screen</a>
+        </div>
+      </div>
+      <div class="stage" id="hero-stage">
+        <span class="tag">Your stream</span>
+        <div class="slot" data-src="board.html?demo=1" data-w="880" data-h="528" style="left: 4%; top: 6%; width: 42%;"></div>
+        <div class="slot" data-src="alerts.html?demo=1&amp;sound=0" data-w="1000" data-h="150" style="left: 50%; top: 52%; width: 46%;"></div>
+        <div class="slot" data-src="ticker.html?demo=1" data-w="1920" data-h="72" style="left: 0; bottom: 0; width: 100%;"></div>
+      </div>
+    </section>
+
+    <section class="block" id="setup" aria-labelledby="setup-h">
+      <div class="wrap">
+        <h2 id="setup-h">Set it up</h2>
+        <div class="setup">
+          <form class="form" id="form" aria-label="Overlay options">
+            <div class="field">
+              <span class="label">LED color</span>
+              <div class="chips" id="themes"></div>
+            </div>
+            <fieldset class="field" style="border:0;padding:0;margin:0">
+              <legend class="label">Alerts</legend>
+              <div class="chips" id="kinds"></div>
+            </fieldset>
+            <label class="field"><span class="label">Zoomies at (km/h)</span>
+              <span class="range"><input type="range" id="zoomies" min="1" max="10" step="0.5"><output for="zoomies"></output></span></label>
+            <label class="field"><span class="label">Alert time (s)</span>
+              <span class="range"><input type="range" id="dur" min="3" max="15" step="1"><output for="dur"></output></span></label>
+            <label class="field"><span class="label">Sound volume</span>
+              <span class="range"><input type="range" id="vol" min="0" max="100" step="5"><output for="vol"></output></span></label>
+            <div class="chips">
+              <label class="chip"><input type="checkbox" id="sound"><span>Sound on</span></label>
+              <label class="chip"><input type="checkbox" id="demo"><span>Demo data in OBS</span></label>
+            </div>
+            <p class="fine">Previews run on sample data. The links use the real wheel unless "Demo data in OBS" is on.</p>
+          </form>
+          <div class="outputs" id="outputs"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="obs" aria-labelledby="obs-h">
+      <div class="wrap">
+        <h2 id="obs-h">Add it in OBS or Streamlabs</h2>
+        <ol class="steps">
+          <li>Copy a link above.</li>
+          <li>In OBS: Sources, +, Browser. In Streamlabs: Add Source, Browser Source. Paste the link as the URL.</li>
+          <li>Set the width and height shown next to the link. Leave the custom CSS empty: the pages are already transparent.</li>
+          <li>For alert sounds tick "Control audio via OBS", and untick "Shutdown source when not visible".</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="block" id="alerts" aria-labelledby="alerts-h">
+      <div class="wrap">
+        <h2 id="alerts-h">What sets off an alert</h2>
+        <table>
+          <thead><tr><th>Alert</th><th>When</th></tr></thead>
+          <tbody>
+            <tr><td>Wake up</td><td>The wheel turns again on two readings in a row after at least three minutes still.</td></tr>
+            <tr><td>Nap</td><td>Three minutes without a turn after he was running.</td></tr>
+            <tr><td>Zoomies</td><td>Running at or above your threshold (4.5 km/h by default) on two readings in a row. Once per burst.</td></tr>
+            <tr><td>Block found</td><td>A settlement on SqueekCore completes one or more Squeek blocks.</td></tr>
+            <tr><td>Top speed</td><td>Squeekchain records a new top speed.</td></tr>
+            <tr><td>Distance</td><td>Lifetime and daily distance milestones.</td></tr>
+            <tr><td>Streak</td><td>Days in a row over 5 km.</td></tr>
+            <tr><td>Merge</td><td>Someone merges two Squeeks (off by default).</td></tr>
+          </tbody>
+        </table>
+        <p class="fine">Readings come from Squeekchain's public API every 5 seconds, the event feed every 15. Reloading a
+          source never replays old alerts. If the API is down the board shows OFF AIR and keeps the last values.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <span>Squeek Stream Kit. Built for the <a href="https://squeekchain.com/genesis/code" target="_blank" rel="noopener">Squeekchain Genesis Code Lane</a>. Not affiliated with Squeekchain.</span>
+      <span><a href="https://github.com/am3en0x/squeek-stream-kit" target="_blank" rel="noopener">Source</a> · <a href="https://docs.squeekchain.com/developers/api/" target="_blank" rel="noopener">Squeekchain API</a></span>
+    </div>
+  </footer>
+
+  <script type="module" src="js/setup.js"></script>
+</body>
+</html>

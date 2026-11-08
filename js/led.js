@@ -115,9 +115,13 @@ export class Led {
   paint() {
     const { canvas, ctx, cols, rows } = this
     if (!cols || !rows) return
-    const box = canvas.parentElement.getBoundingClientRect()
-    let pitch = box.width / cols
-    if (this.fit === 'contain' && box.height > 0) pitch = Math.min(pitch, box.height / rows)
+    // the parent's content box: its client size without padding
+    const parent = canvas.parentElement
+    const cs = getComputedStyle(parent)
+    const bw = parent.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
+    const bh = parent.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)
+    let pitch = bw / cols
+    if (this.fit === 'contain' && bh > 0) pitch = Math.min(pitch, bh / rows)
     if (!(pitch > 0)) return
     const cw = Math.floor(cols * pitch)
     const ch = Math.floor(rows * pitch)
