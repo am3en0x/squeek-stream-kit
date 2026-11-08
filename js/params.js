@@ -1,6 +1,11 @@
 // Options shared by every page, read from the URL. Anything unknown or out of range falls back to the default.
 export const ALERT_KINDS = ['wake', 'nap', 'zoomies', 'block', 'record', 'distance', 'streak', 'merge']
 export const THEMES = { amber: '#f6a63b', green: '#7fe08a', ice: '#7fdcff', white: '#f3e9cc' }
+export const SCENES = ['starting', 'brb', 'ending']
+const CHANNEL = /^[a-z0-9_]{3,25}$/
+const GOAL = /^(km|blocks|run):\d+(\.\d+)?$/
+const CLOCK = /^\d{1,2}:\d{2}$/
+const SIZE = /^\d{3,4}x\d{3,4}$/
 export const DEFAULTS = Object.freeze({
   theme: 'amber',
   layout: 'full',
@@ -10,6 +15,13 @@ export const DEFAULTS = Object.freeze({
   vol: 60,
   dur: 6,
   demo: false,
+  chat: '',
+  goal: null,
+  since: null,
+  size: '640x360',
+  mode: 'starting',
+  at: null,
+  name: '',
 })
 
 export function parseParams(search) {
@@ -29,7 +41,20 @@ export function parseParams(search) {
     vol: num('vol', 0, 100),
     dur: num('dur', 3, 15),
     demo: q.get('demo') === '1',
+    chat: CHANNEL.test((q.get('chat') || '').toLowerCase()) ? q.get('chat').toLowerCase() : DEFAULTS.chat,
+    goal: GOAL.test((q.get('goal') || '').toLowerCase()) ? q.get('goal').toLowerCase() : DEFAULTS.goal,
+    since: timeish(q.get('since')),
+    size: SIZE.test(q.get('size') || '') ? q.get('size') : DEFAULTS.size,
+    mode: pick('mode', SCENES),
+    at: CLOCK.test(q.get('at') || '') ? q.get('at') : DEFAULTS.at,
+    name: (q.get('name') || '').replace(/[<>]/g, '').trim().slice(0, 24),
   }
+}
+
+// 'HH:MM' or anything Date.parse understands, else null.
+function timeish(v) {
+  if (!v) return null
+  return CLOCK.test(v) || Number.isFinite(Date.parse(v)) ? v : null
 }
 
 function parseAlerts(raw) {
@@ -43,8 +68,8 @@ function parseAlerts(raw) {
 // The query string for these options with every default left out, for the setup page's links.
 export function toQuery(opts) {
   const out = []
-  for (const key of ['theme', 'layout', 'zoomies', 'vol', 'dur']) {
-    if (opts[key] !== undefined && opts[key] !== DEFAULTS[key]) out.push(`${key}=${encodeURIComponent(opts[key])}`)
+  for (const key of ['theme', 'layout', 'zoomies', 'vol', 'dur', 'chat', 'goal', 'since', 'size', 'mode', 'at', 'name']) {
+    if (opts[key] !== undefined && opts[key] !== null && opts[key] !== '' && opts[key] !== DEFAULTS[key]) out.push(`${key}=${encodeURIComponent(opts[key])}`)
   }
   if (opts.sound === false) out.push('sound=0')
   if (opts.demo) out.push('demo=1')

@@ -9,3 +9,9 @@ export function clock(seconds) {
   const s = Math.max(0, Math.floor(seconds))
   return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0')
 }
+
+// Like clock(), with hours in front once there is an hour or more: 1:02:03.
+export function clockLong(seconds) {
+  const s = Math.max(0, Math.floor(seconds))
+  return s < 3600 ? clock(s) : `${Math.floor(s / 3600)}:${clock(s % 3600)}`
+}

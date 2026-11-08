@@ -46,3 +46,13 @@ export const DEMO_ALERTS = [
   { kind: 'merge', title: 'SQUEEK MERGE', detail: '#4702 IS LEVEL 2' },
   { kind: 'nap', title: 'NAP TIME', detail: 'THE WHEEL STOPPED' },
 ]
+
+// The session so far, for the goal bar and the scenes: 3.2 km at the start of the demo, growing fast enough to watch.
+export function demoStats(now = Date.now()) {
+  const sec = (now - T0) / 1000
+  return { startedAt: T0 - 50 * 60_000, km: Math.min(5.4, 3.2 + sec * 0.01), blocks: Math.min(2, 1 + Math.floor(sec / 75)), topKmh: 4.9, runSec: 1500 + sec, settlements: 3 + Math.floor(sec / 45) }
+}
+
+// Round Call in the demo: 90-second rounds, a chat that calls, and outcomes that cycle.
+export const DEMO_CALLS = { duration: 90, genesis: Math.floor(T0 / 1000) - 90 * 567, outcomes: ['jog', 'zoomies', 'nap', 'jog'] }
+export const DEMO_CHATTERS = ['ann', 'bob_streams', 'catnip', 'dan', 'eve_zoom', 'fox', 'gus', 'hamfan', 'ivy', 'jo']
