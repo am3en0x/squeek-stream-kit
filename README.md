@@ -52,6 +52,15 @@ after two minutes, and no wheel alerts fire.
 | `dur` | alert seconds, 3 to 15 | `6` |
 | `demo` | `1`: sample data and an alert every 8 s, for placing sources while he sleeps | off |
 
+## Watch page
+
+`watch.html` puts the overlays on Squeekchain's own livestream for anyone, no OBS needed: the stream plays in a 16:9
+screen with the LED board and the alerts on top (they let clicks through to the player) and the ticker under it.
+Pass the stream as `?youtube=VIDEO_ID`, `?twitch=CHANNEL` or `?x=BROADCAST_ID`, or paste the live link on the page;
+the address then carries it, so the page can be shared as is. YouTube and Twitch use their standard embeds, X uses
+`studio.x.com/embed/broadcast/…`, the same three kinds Squeekchain's site uses. The alert sound starts off and turns on
+with a click (browsers need one).
+
 ## Second screen
 
 `live.html` is for viewers on a phone: the board, the round clock, the latest events and a link to watch the wheel.
@@ -73,7 +82,7 @@ that says `"status": "unavailable"` is treated as unknown, never as zero. Nothin
 ## Develop
 
 ```sh
-npm test                               # node --test: options, rounds, status, wheel machine, feed, glyphs (35 tests)
+npm test                               # node --test: options, rounds, status, wheel machine, feed, glyphs, stream links (40 tests)
 python3 -m http.server 8080 -d dist    # then open http://localhost:8080/
 ```
 

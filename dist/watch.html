@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en" class="site watch-page">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Squeektoshi live with overlays</title>
+  <meta name="description" content="Watch Squeekchain's hamster stream with a live LED board, alerts and a round ticker on top.">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/kit.css">
+</head>
+<body>
+  <header class="watch-top">
+    <a class="brand" href="./"><img src="favicon.svg" alt="" width="24" height="24">Squeektoshi live</a>
+    <div class="watch-tools">
+      <button class="btn small" type="button" id="sound" aria-pressed="false">Alert sound off</button>
+      <button class="btn small" type="button" id="change">Change stream</button>
+      <a class="btn small" href="./">Get the overlays</a>
+    </div>
+  </header>
+
+  <main class="watch-main">
+    <div class="screen" id="screen">
+      <iframe class="video" id="video" title="Squeekchain livestream" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen hidden></iframe>
+      <div class="offair" id="offair">
+        <div class="offair-box">
+          <p class="label">Squeektoshi live</p>
+          <h1>Watch the wheel with the overlays</h1>
+          <p>Paste the Squeekchain livestream link: YouTube, Twitch or an X broadcast. The board, alerts and ticker run on top of
+            it, live from the chain.</p>
+          <form class="paste" id="paste">
+            <input id="link" type="url" inputmode="url" placeholder="https://www.youtube.com/watch?v=…" aria-label="Livestream link" required>
+            <button class="btn solid" type="submit">Watch</button>
+          </form>
+          <p class="fine" id="paste-msg" role="status">Find the link on <a href="https://sepolia.squeekchain.com/#live" target="_blank" rel="noopener">squeekchain.com</a> while the hamster is live.</p>
+        </div>
+      </div>
+      <div class="slot board-slot" id="board-slot"></div>
+      <div class="slot alert-slot" id="alert-slot"></div>
+    </div>
+    <div class="ticker-slot" id="ticker-slot"></div>
+  </main>
+
+  <script type="module" src="js/watch.js"></script>
+</body>
+</html>
