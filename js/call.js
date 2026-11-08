@@ -37,7 +37,7 @@ if (opts.demo) {
     const likely = DEMO_CALLS.outcomes[s.next % DEMO_CALLS.outcomes.length]
     const kind = Math.random() < 0.6 ? likely : CALLS[Math.floor(Math.random() * 3)]
     calls.chatCall(user, kind, Date.now())
-  }, 2500)
+  }, 2000)
   setInterval(() => {
     const now = Date.now()
     const s = calls.state(now)
@@ -69,6 +69,32 @@ let resultAt = 0
 const COLS = 176
 const ROWS = 50
 const COLW = 58
+const SPRITE = { nap: 'hamnap', jog: 'hamjog', zoomies: 'hamzoom' }
+const SETTLED_MS = 15_000
+
+function drawSettled(r, now, s) {
+  const x0 = led.icon('call', 2, 2, COLORS.cream)
+  led.text(`ROUND ${r.round} SETTLED`, x0 + 1, 2, accent)
+  const right = `NEXT ${s.next}`
+  led.text(right, COLS - 2 - textWidth(right), 2, COLORS.label)
+  if (r.outcome === 'void') {
+    led.text('NO SIGNAL FROM THE WHEEL', 2, 16, COLORS.label, 2)
+    led.text('NOTHING SCORED', 2, 42, COLORS.label)
+    return
+  }
+  led.icon(SPRITE[r.outcome], 2, 13, accent, 2)
+  led.text(NAMES[r.outcome], 30, 16, accent, 2)
+  if (r.chat.total) {
+    const names = r.chat.right.slice(0, 3).map((u) => u.toUpperCase().slice(0, 9))
+    const line = `${r.chat.right.length} OF ${r.chat.total} CALLED IT` + (names.length ? `: ${names.join(' ')}` + (r.chat.right.length > 3 ? ' +' + (r.chat.right.length - 3) : '') : '')
+    led.text(line.slice(0, 28), 2, 33, COLORS.cream)
+    const top = calls.leaderboard(3)
+    if (top.length) led.text(('TOP ' + top.map((t) => `${t.user.toUpperCase().slice(0, 9)} ${t.points}`).join('  ')).slice(0, 28), 2, 42, COLORS.label)
+  } else {
+    led.text(chatState === 'none' ? 'VIEWERS SCORE ON THE SECOND SCREEN' : 'NOBODY CALLED THIS ONE', 2, 33, COLORS.label)
+    led.text(`CALLS FOR ROUND ${s.next} ARE OPEN`, 2, 42, COLORS.cream)
+  }
+}
 
 function draw() {
   const now = Date.now()
@@ -85,49 +111,43 @@ function draw() {
     if (res.outcome !== 'void') sound.play(res.outcome === 'zoomies' ? 'zoomies' : res.outcome === 'nap' ? 'nap' : 'block')
   }
   const s = calls.state(now)
-  const closing = s.left <= 60
-  // line 1: which round to call, and how long calls stay open
+  if (lastResult && now - resultAt < SETTLED_MS) {
+    drawSettled(lastResult, now, s)
+    led.paint()
+    card.setAttribute('aria-label', `Round ${lastResult.round} settled: ${lastResult.outcome}. Next: call round ${s.next}.`)
+    return
+  }
+  // line 1: which round to call, and when calls close (blinking in the last 15 seconds)
   const x0 = led.icon('call', 2, 2, COLORS.cream)
   led.text(`CALL ROUND ${s.next}`, x0 + 1, 2, accent)
-  const right = `${clock(s.left)} LEFT`
-  led.text(right, COLS - 2 - textWidth(right), 2, closing ? accent : COLORS.label)
-  // the three calls: name, the chat's share big, a bar
+  const right = `CLOSES ${clock(s.left)}`
+  if (s.left > 15 || Math.floor(now / 500) % 2) led.text(right, COLS - 2 - textWidth(right), 2, accent)
+  // the three calls: Squeektoshi in each pose, the name, the count (the share once ten have called), a bar
   const t = s.tally
   CALLS.forEach((k, i) => {
     const x = 2 + i * COLW
-    const share = t.total ? t.pct[k] : null
-    const leading = Boolean(t.total) && CALLS.every((o) => t.counts[k] >= t.counts[o])
-    led.text(NAMES[k], x, 12, leading ? accent : COLORS.cream)
-    led.text(share === null ? '--' : `${share}%`, x, 21, leading ? accent : share ? COLORS.cream : COLORS.label, 2)
-    led.bar(x, 36, COLW - 6, 3, share === null ? 0 : share / 100, leading ? accent : COLORS.rim, COLORS.dim)
+    const n = t.counts[k]
+    const leading = n > 0 && CALLS.every((o) => n >= t.counts[o])
+    led.icon(SPRITE[k], x, 11, leading ? accent : COLORS.rim)
+    led.text(NAMES[k], x + 14, 12, leading ? accent : COLORS.cream)
+    const big = t.total === 0 ? '--' : t.total >= 10 ? `${t.pct[k]}%` : String(n)
+    led.text(big, x, 21, leading ? accent : n ? COLORS.cream : COLORS.label, 2)
+    led.bar(x, 36, COLW - 6, 3, t.total ? n / t.total : 0, leading ? accent : COLORS.rim, COLORS.dim)
   })
-  // the last line: the latest result, the chat hint or the top callers
+  // the last line: the way in, then the count and the top callers
   let line
   let tone = COLORS.cream
-  if (lastResult && now - resultAt < 20_000) {
-    const r = lastResult
-    if (r.outcome === 'void') line = `ROUND ${r.round}: NO SIGNAL`
-    else {
-      line = `ROUND ${r.round} WAS A ${NAMES[r.outcome]}`
-      if (r.chat.total) line += `  CHAT ${Math.round((100 * r.chat.right.length) / r.chat.total)}% RIGHT`
-      tone = accent
-    }
-  } else if (chatState === 'open' && calls.leaderboard(1).length && Math.floor(now / 8000) % 2) {
+  if (chatState === 'open' && t.total < 3) line = 'TYPE !NAP !JOG OR !ZOOMIES'
+  else if (chatState === 'open' && calls.leaderboard(1).length && Math.floor(now / 8000) % 2) {
     line = 'TOP ' + calls.leaderboard(3).map((r) => `${r.user.toUpperCase().slice(0, 9)} ${r.points}`).join('  ')
-  } else if (chatState === 'open') {
-    line = t.total ? `${t.total} CALL${t.total === 1 ? '' : 'S'}  !NAP !JOG !ZOOMIES` : 'TYPE !NAP !JOG OR !ZOOMIES'
     tone = COLORS.label
-  } else if (chatState === 'none') {
-    line = 'CALL IT ON THE SECOND SCREEN'
-    tone = COLORS.label
-  } else {
-    line = `CHAT ${chatState.toUpperCase()}`
-    tone = COLORS.label
-  }
+  } else if (chatState === 'open') line = `${t.total} CALLS IN  !NAP !JOG !ZOOMIES`
+  else if (chatState === 'none') { line = 'VIEWERS CALL IT ON THE SECOND SCREEN'; tone = COLORS.label }
+  else { line = `CHAT ${chatState.toUpperCase()}`; tone = COLORS.label }
   led.text(line.slice(0, 28), 2, 42, tone)
   if (flash > 0) { flash -= 1; for (let x = 0; x < COLS; x += 2) led.dot(x, ROWS - 1, accent) }
   led.paint()
-  card.setAttribute('aria-label', `Call round ${s.next}, ${clock(s.left)} left. ${line}`)
+  card.setAttribute('aria-label', `Call round ${s.next}, closes in ${clock(s.left)}. ${line}`)
 }
 draw()
 setInterval(draw, 500)

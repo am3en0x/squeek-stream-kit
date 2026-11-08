@@ -33,11 +33,12 @@ function draw(a) {
   for (let y = 0; y < ROWS; y++) { led.dot(0, y, COLORS.dim); led.dot(COLS - 1, y, COLORS.dim) }
   // the pictogram and the title as one centred line, the detail under them
   const k = textWidth(a.title, 2) + 18 <= COLS - 8 ? 2 : 1
-  const iconW = 8 * k
+  const pic = { wake: 'hamjog', nap: 'hamnap', zoomies: 'hamzoom' }[a.kind] || a.kind
+  const iconW = (pic.startsWith('ham') ? 13 : 8) * k
   const w = textWidth(a.title, k) + iconW + k
   let x = Math.floor((COLS - w) / 2)
   const y = k === 2 ? 4 : 8
-  x = led.icon(a.kind, x, y, COLORS.cream, k) + k
+  x = led.icon(pic, x, y, pic.startsWith('ham') ? accent : COLORS.cream, k) + k
   led.text(a.title, x, y, accent, k)
   led.text(a.detail, Math.floor((COLS - textWidth(a.detail, 1)) / 2), 21, COLORS.cream)
   led.paint()

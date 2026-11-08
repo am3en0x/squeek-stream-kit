@@ -9,7 +9,7 @@ const OVERLAYS = [
   { id: 'alerts', group: 'overlays', name: 'Alerts', page: 'alerts.html', w: 1000, h: 150, note: 'Empty until something happens.' },
   { id: 'ticker', group: 'overlays', name: 'Ticker', page: 'ticker.html', w: 1920, h: 72, note: 'The round clock and the latest events.' },
   { id: 'call', group: 'companion', name: 'Round Call', page: 'call.html', params: ['chat'], w: 1056, h: 300, note: "The next round to call, the chat's tally, the result and the top callers.", demo: { chat: 'hamcam' } },
-  { id: 'goal', group: 'companion', name: 'Stream goal', page: 'goal.html', params: ['goal', 'since'], w: 1000, h: 160, note: 'Fills as the session gets there; a tune when it does.' },
+  { id: 'goal', group: 'companion', name: 'Stream goal', page: 'goal.html', params: ['goal', 'since'], w: 1000, h: 200, note: 'Fills as the session gets there; a tune when it does.' },
   { id: 'frame', group: 'companion', name: 'Cam frame', page: 'frame.html', params: ['name', 'size'], size: true, note: 'Put your camera behind it. The rim runs at his pace.' },
   { id: 'starting', group: 'companion', name: 'Starting soon', page: 'scene.html', extra: { mode: 'starting' }, params: ['at', 'since'], w: 1920, h: 1080, note: 'A full scene with the live wheel and a countdown.' },
   { id: 'brb', group: 'companion', name: 'Be right back', page: 'scene.html', extra: { mode: 'brb' }, params: ['since'], w: 1920, h: 1080, note: 'The wheel, the round clock and the session so far.' },

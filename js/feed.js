@@ -66,8 +66,8 @@ export function alertFor(e) {
 
 // The alert card for a change the wheel machine saw.
 export function wheelAlert(kind, reading) {
-  if (kind === 'wake') return { kind, title: 'SQUEEKTOSHI IS UP', detail: 'THE WHEEL IS TURNING' }
-  if (kind === 'nap') return { kind, title: 'NAP TIME', detail: 'THE WHEEL STOPPED' }
+  if (kind === 'wake') return { kind, title: 'SQUEEKTOSHI IS UP', detail: 'BACK ON THE WHEEL' }
+  if (kind === 'nap') return { kind, title: 'NAP TIME', detail: 'CURLED UP IN THE BEDDING' }
   if (kind === 'zoomies') return { kind, title: 'ZOOMIES!', detail: `${(reading?.speedKmh ?? 0).toFixed(1)} KM/H` }
   return null
 }
