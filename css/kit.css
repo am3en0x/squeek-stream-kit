@@ -146,3 +146,36 @@ td:first-child { color: var(--ink); white-space: nowrap; }
   .block { padding: 56px 0; }
   .hero { padding: 40px var(--gutter) 56px; }
 }
+
+/* ---------------------------------------------------------------- the watch page: the stream with the overlays on top */
+.watch-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; min-height: 52px; padding: 8px 16px; border-bottom: 1px solid var(--line); }
+.watch-top .brand { font-size: 20px; }
+.watch-tools { display: flex; flex-wrap: wrap; gap: 8px; }
+.watch-main { width: min(100vw, calc((100vh - 53px) * 1.6667)); margin: 0 auto; }
+.screen { position: relative; aspect-ratio: 16 / 9; background: #000; overflow: hidden; }
+.screen .video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.screen .slot { position: absolute; overflow: hidden; pointer-events: none; }
+.screen .slot iframe, .ticker-slot iframe { border: 0; transform-origin: 0 0; pointer-events: none; background: transparent; }
+.board-slot { left: 1.5%; top: 2.5%; width: 30%; }
+.alert-slot { left: 24%; width: 52%; bottom: 4%; }
+.ticker-slot { position: relative; overflow: hidden; }
+.offair { position: absolute; inset: 0; display: grid; align-items: center; justify-items: end; padding: 4% 6%;
+  background:
+    radial-gradient(55% 70% at 72% 40%, rgb(246 166 59 / 0.10), transparent 70%),
+    repeating-linear-gradient(0deg, rgb(255 255 255 / 0.02) 0 1px, transparent 1px 4px),
+    #07080b; }
+.offair-box { width: min(52%, 560px); }
+.offair-box h1 { font-size: clamp(22px, 3.4vw, 46px); margin: 8px 0 12px; }
+.offair-box p { font-size: clamp(12px, 1.1vw, 15px); margin: 0; }
+.paste { display: flex; gap: 8px; margin: 18px 0 10px; }
+.paste input { flex: 1; min-width: 0; height: 44px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 6px; background: #0b0b0e; color: var(--ink); font: 400 13px var(--font-mono); }
+.paste input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+@media (max-width: 760px) {
+  .watch-main { width: 100vw; }
+  .offair { justify-items: center; align-items: center; padding: 0 4%; }
+  .offair-box { width: 100%; }
+  .offair-box h1, .offair-box > p:not(.fine), .offair-box .label, .offair-box .fine:not(.bad) { display: none; }
+  .offair-box .fine.bad { color: var(--ink); background: rgb(0 0 0 / 0.7); padding: 2px 6px; border-radius: 4px; }
+  .paste { margin: 0 0 6px; }
+  .paste input, .paste .btn { height: 36px; min-height: 36px; }
+}

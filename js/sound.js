@@ -23,6 +23,7 @@ export function createSound({ vol = 60, on = true } = {}) {
     return ctx
   }
   return {
+    setOn(v) { on = Boolean(v); if (on) ensure() },
     unlock() { ensure() },
     play(kind) {
       if (!on || vol <= 0) return

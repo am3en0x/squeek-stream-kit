@@ -1,4 +1,5 @@
 import { parseParams, toQuery, THEMES, ALERT_KINDS, DEFAULTS } from './params.js'
+import { mount } from './frames.js'
 
 // The setup page: options in, one ready link per overlay out, each with a live preview on sample data.
 const OVERLAYS = [
@@ -11,26 +12,6 @@ const KIND_NAMES = { wake: 'Wake up', nap: 'Nap', zoomies: 'Zoomies', block: 'Bl
 const base = new URL('.', location.href).href
 const opts = { ...DEFAULTS, alerts: [...DEFAULTS.alerts] }
 const $ = (id) => document.getElementById(id)
-
-// a preview: an iframe at the overlay's real size, scaled into its slot
-function mount(slot, src, w, h) {
-  const frame = document.createElement('iframe')
-  frame.src = src
-  frame.width = w
-  frame.height = h
-  frame.title = 'Overlay preview'
-  frame.loading = 'lazy'
-  frame.setAttribute('allowtransparency', 'true')
-  slot.append(frame)
-  const fit = () => {
-    const k = slot.clientWidth / w
-    frame.style.transform = `scale(${k})`
-    slot.style.height = h * k + 'px'
-  }
-  new ResizeObserver(fit).observe(slot)
-  fit()
-  return frame
-}
 
 for (const slot of document.querySelectorAll('#hero-stage .slot')) mount(slot, slot.dataset.src, Number(slot.dataset.w), Number(slot.dataset.h))
 

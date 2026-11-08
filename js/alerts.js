@@ -71,7 +71,11 @@ if (opts.demo) {
 // The setup page's "fire test alert" button reaches its preview through postMessage.
 let testIndex = 0
 window.addEventListener('message', (e) => {
-  if (e.origin !== location.origin || !e.data || e.data.type !== 'squeek-test-alert') return
-  sound.unlock()
-  enqueue(DEMO_ALERTS[testIndex++ % DEMO_ALERTS.length], true)
+  if (e.origin !== location.origin || !e.data) return
+  if (e.data.type === 'squeek-test-alert') {
+    sound.unlock()
+    enqueue(DEMO_ALERTS[testIndex++ % DEMO_ALERTS.length], true)
+  }
+  // the watch page's sound button
+  if (e.data.type === 'squeek-sound') sound.setOn(e.data.on)
 })
