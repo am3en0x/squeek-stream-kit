@@ -2,7 +2,9 @@
 // list of sample alerts, so a streamer can place the overlays in OBS while Squeektoshi is asleep.
 const T0 = Date.now()
 
-export const DEMO_CORE = { genesisTimestamp: String(Math.floor(T0 / 1000) - 567 * 600 - 425), roundDuration: '600' }
+// Demo rounds last 60 seconds (real ones 600) so a preview shows a round settle: round 568 is on when the page opens.
+export const DEMO_ROUND = 60
+export const DEMO_CORE = { genesisTimestamp: String(Math.floor(T0 / 1000) - 567 * DEMO_ROUND - 20), roundDuration: String(DEMO_ROUND) }
 
 export function demoReading(now = Date.now()) {
   const sec = (now - T0) / 1000
@@ -37,14 +39,14 @@ export function demoEvents(now = Date.now()) {
 }
 
 export const DEMO_ALERTS = [
-  { kind: 'wake', title: 'SQUEEKTOSHI IS UP', detail: 'THE WHEEL IS TURNING' },
+  { kind: 'wake', title: 'SQUEEKTOSHI IS UP', detail: 'BACK ON THE WHEEL' },
   { kind: 'zoomies', title: 'ZOOMIES!', detail: '5.0 KM/H' },
   { kind: 'block', title: 'BLOCK FOUND', detail: 'SQUEEK BLOCK #2,000' },
   { kind: 'record', title: 'NEW TOP SPEED', detail: '5.2 KM/H' },
   { kind: 'distance', title: '20 KM', detail: 'ON THE WHEEL, ALL TIME' },
   { kind: 'streak', title: '3-DAY STREAK', detail: '5+ KM EVERY DAY' },
   { kind: 'merge', title: 'SQUEEK MERGE', detail: '#4702 IS LEVEL 2' },
-  { kind: 'nap', title: 'NAP TIME', detail: 'THE WHEEL STOPPED' },
+  { kind: 'nap', title: 'NAP TIME', detail: 'CURLED UP IN THE BEDDING' },
 ]
 
 // The session so far, for the goal bar and the scenes: 3.2 km at the start of the demo, growing fast enough to watch.
@@ -53,6 +55,6 @@ export function demoStats(now = Date.now()) {
   return { startedAt: T0 - 50 * 60_000, km: Math.min(5.4, 3.2 + sec * 0.01), blocks: Math.min(2, 1 + Math.floor(sec / 75)), topKmh: 4.9, runSec: 1500 + sec, settlements: 3 + Math.floor(sec / 45) }
 }
 
-// Round Call in the demo: 90-second rounds, a chat that calls, and outcomes that cycle.
-export const DEMO_CALLS = { duration: 90, genesis: Math.floor(T0 / 1000) - 90 * 567, outcomes: ['jog', 'zoomies', 'nap', 'jog'] }
+// Round Call in the demo: the same 60-second rounds, a chat that calls, and outcomes that cycle.
+export const DEMO_CALLS = { duration: DEMO_ROUND, genesis: Number(DEMO_CORE.genesisTimestamp), outcomes: ['jog', 'zoomies', 'nap', 'jog'] }
 export const DEMO_CHATTERS = ['ann', 'bob_streams', 'catnip', 'dan', 'eve_zoom', 'fox', 'gus', 'hamfan', 'ivy', 'jo']

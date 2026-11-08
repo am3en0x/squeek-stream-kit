@@ -25,6 +25,7 @@ startSource({ demo: opts.demo }, {
 
 // the dots along the rim, clockwise from the top-left corner
 const PITCH = 12
+const UNLIT = 'rgb(150 143 158 / 0.42)'
 function rimDots() {
   const inset = 8
   const pts = []
@@ -54,16 +55,21 @@ function drawRim(now) {
   const breath = 0.55 + 0.45 * Math.sin(now / 900)
   for (let i = 0; i < n; i++) {
     const [x, y] = DOTS[i]
-    let color = COLORS.dim
+    let color = UNLIT
     let r = 3.2
     if (running) {
       // a lit tail of ten dots behind the runner, brighter at the head
       const d = (i - pos + n) % n
       if (d < 10) { color = d < 2 ? COLORS.cream : accent; r = d < 2 ? 4.4 : 4.2 - d * 0.1 }
-      else color = fast ? '#3a3020' : COLORS.dim
+      else color = fast ? 'rgb(246 166 59 / 0.35)' : UNLIT
     } else if (wheel.phase === 'napping' || wheel.phase === 'still') {
-      color = i % 4 === 0 ? `rgb(246 166 59 / ${(0.25 + 0.3 * breath).toFixed(2)})` : COLORS.dim
+      color = i % 4 === 0 ? `rgb(246 166 59 / ${(0.3 + 0.4 * breath).toFixed(2)})` : UNLIT
     }
+    // a dark backer keeps the dot readable over bright video
+    ctx.fillStyle = 'rgb(5 5 7 / 0.7)'
+    ctx.beginPath()
+    ctx.arc(x, y, r + 1.6, 0, 6.2832)
+    ctx.fill()
     ctx.fillStyle = color
     ctx.beginPath()
     ctx.arc(x, y, r, 0, 6.2832)

@@ -64,6 +64,10 @@ export const ICONS = {
   goal: ['0000001', '0000010', '0000100', '1001000', '0101000', '0010000', '0000000'],
   call: ['0111110', '1000001', '0000001', '0000110', '0001000', '0000000', '0001000'],
   chat: ['0111110', '1000001', '1000001', '1000001', '0111110', '0010000', '0100000'],
+  // Squeektoshi, 12 x 8: curled up with a Z, trotting, and stretched out at full speed
+  hamnap: ['000000000011', '000000000100', '000111110011', '001111111100', '011111111110', '011011111110', '011111111110', '001111011100'],
+  hamjog: ['000000011000', '000000111100', '000111111110', '001111111111', '011111111101', '011111111110', '000111111000', '000100001000'],
+  hamzoom: ['000000000110', '100001111111', '010111111111', '001111111111', '011111111110', '010011110000', '000001100000', '000000000000'],
 }
 
 const glyph = (ch) => FONT[ch] || FONT[' ']
@@ -110,17 +114,17 @@ export class Led {
     return x
   }
 
-  // Draws a 7 x 7 pictogram scaled by k and returns the x just after it.
+  // Draws a pictogram (7 x 7, or a 12 x 8 sprite) scaled by k and returns the x just after it.
   icon(name, x, y, color, k = 1) {
     const g = ICONS[name]
     if (!g) return x
-    for (let r = 0; r < 7; r++) {
-      for (let c = 0; c < 7; c++) {
+    for (let r = 0; r < g.length; r++) {
+      for (let c = 0; c < g[r].length; c++) {
         if (g[r][c] !== '1') continue
         for (let i = 0; i < k; i++) for (let j = 0; j < k; j++) this.dot(x + c * k + i, y + r * k + j, color)
       }
     }
-    return x + 8 * k
+    return x + (g[0].length + 1) * k
   }
 
   bar(x, y, w, h, frac, on, off) {
@@ -128,15 +132,23 @@ export class Led {
     for (let i = 0; i < w; i++) for (let j = 0; j < h; j++) this.dot(x + i, y + j, i < lit ? on : off)
   }
 
+  // A hamster wheel seen from the side: a dim rim, bright rungs riding round it as it turns, three thin spokes and
+  // the axle. turnDeg moves the rungs and the spokes.
   wheel(cx, cy, r, turnDeg, rim, spoke, hub) {
     const steps = Math.max(24, Math.round(r * 7))
     for (let i = 0; i < steps; i++) {
       const t = (i / steps) * Math.PI * 2
       this.dot(Math.round(cx + r * Math.cos(t)), Math.round(cy + r * Math.sin(t)), rim)
     }
+    const rungs = Math.max(8, Math.round(r * 1.2))
+    for (let i = 0; i < rungs; i++) {
+      const t = ((i / rungs) * 360 + turnDeg) * Math.PI / 180
+      this.dot(Math.round(cx + r * Math.cos(t)), Math.round(cy + r * Math.sin(t)), spoke)
+      if (r >= 12) this.dot(Math.round(cx + (r - 1) * Math.cos(t)), Math.round(cy + (r - 1) * Math.sin(t)), spoke)
+    }
     for (let s = 0; s < 3; s++) {
       const t = ((s * 120 + turnDeg) * Math.PI) / 180
-      for (let d = 2; d < r - 1; d++) this.dot(Math.round(cx + d * Math.cos(t)), Math.round(cy + d * Math.sin(t)), spoke)
+      for (let d = 2; d < r - 1; d += 2) this.dot(Math.round(cx + d * Math.cos(t)), Math.round(cy + d * Math.sin(t)), rim)
     }
     for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) this.dot(cx + i, cy + j, hub)
   }

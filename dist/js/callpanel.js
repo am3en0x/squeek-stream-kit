@@ -21,7 +21,7 @@ export function createCallPanel(root, { zoomies = 4.5, demo = false } = {}) {
   root.innerHTML = `
     <div class="cp-head">
       <div><span class="label">Round call</span><strong class="cp-title">Tuning in…</strong></div>
-      <span class="cp-left label"></span>
+      <div class="cp-right"><span class="cp-score"></span><span class="cp-left label"></span></div>
     </div>
     <div class="cp-buttons" role="group" aria-label="Your call for the next round">
       ${CALLS.map((k) => `<button type="button" data-call="${k}" aria-pressed="false"><b>${NAMES[k]}</b><small>${HINT[k]}${POINTS[k] > 1 ? ` · ${POINTS[k]} pts` : ''}</small></button>`).join('')}
@@ -59,8 +59,10 @@ export function createCallPanel(root, { zoomies = 4.5, demo = false } = {}) {
     $('.cp-left').classList.toggle('soon', s.left <= 60)
     for (const b of root.querySelectorAll('[data-call]')) b.setAttribute('aria-pressed', String(b.dataset.call === s.myCall))
     const sc = calls.score
+    $('.cp-score').textContent = sc.played ? `Streak ${sc.streak} · ${sc.points} pts` : 'No calls yet'
+    $('.cp-score').classList.toggle('hot', sc.streak >= 3)
     $('.cp-status').textContent = (s.myCall ? `Your call: ${NAMES[s.myCall].toLowerCase()}. ` : 'Pick one before the round ends. ')
-      + (sc.played ? `Streak ${sc.streak}, best ${sc.best}, ${sc.points} pts from ${sc.played} rounds.` : 'Nap and jog pay 1 point, zoomies 3.')
+      + (sc.played ? `Best streak ${sc.best}, ${sc.right} of ${sc.played} right.` : 'Nap and jog pay 1 point, zoomies 3.')
     if (shownResultAt && now - shownResultAt > 60_000) { $('.cp-result').hidden = true; shownResultAt = 0 }
   }
 

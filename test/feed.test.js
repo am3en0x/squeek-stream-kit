@@ -38,8 +38,8 @@ test('one block found reads in the singular', () => {
 })
 
 test('wheel alerts', () => {
-  assert.deepEqual(wheelAlert('wake'), { kind: 'wake', title: 'SQUEEKTOSHI IS UP', detail: 'THE WHEEL IS TURNING' })
-  assert.deepEqual(wheelAlert('nap'), { kind: 'nap', title: 'NAP TIME', detail: 'THE WHEEL STOPPED' })
+  assert.deepEqual(wheelAlert('wake'), { kind: 'wake', title: 'SQUEEKTOSHI IS UP', detail: 'BACK ON THE WHEEL' })
+  assert.deepEqual(wheelAlert('nap'), { kind: 'nap', title: 'NAP TIME', detail: 'CURLED UP IN THE BEDDING' })
   assert.deepEqual(wheelAlert('zoomies', { speedKmh: 4.96 }), { kind: 'zoomies', title: 'ZOOMIES!', detail: '5.0 KM/H' })
 })
 
