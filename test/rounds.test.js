@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { roundAt, clock } from '../dist/js/rounds.js'
+import { roundAt, clock, clockLong } from '../dist/js/rounds.js'
 
 const GENESIS = 1793735400
 
@@ -23,4 +23,11 @@ test('clock', () => {
   assert.equal(clock(564), '09:24')
   assert.equal(clock(5), '00:05')
   assert.equal(clock(-3), '00:00')
+})
+
+test('clockLong adds hours when needed', () => {
+  assert.equal(clockLong(59), '00:59')
+  assert.equal(clockLong(3599), '59:59')
+  assert.equal(clockLong(3600), '1:00:00')
+  assert.equal(clockLong(9759), '2:42:39')
 })

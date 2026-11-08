@@ -7,6 +7,7 @@ test('defaults', () => {
   assert.deepEqual(p, {
     theme: 'amber', layout: 'full', alerts: ['wake', 'nap', 'zoomies', 'block', 'record', 'distance', 'streak'],
     zoomies: 4.5, sound: true, vol: 60, dur: 6, demo: false,
+    chat: '', goal: null, since: null, size: '640x360', mode: 'starting', at: null, name: '',
   })
 })
 
@@ -33,4 +34,29 @@ test('toQuery leaves defaults out and round-trips', () => {
   assert.equal(q, '?theme=green&sound=0&alerts=block,merge')
   assert.deepEqual(parseParams(q), opts)
   assert.equal(toQuery({ ...parseParams(''), alerts: [] }), '?alerts=none')
+})
+
+test('companion options: chat channel, goal, since, size, mode, at, name', () => {
+  const p = parseParams('?chat=SomeStreamer&goal=km:5&since=21:00&size=800x450&mode=brb&at=20:30&name=%3Cb%3EHam%20Cam')
+  assert.equal(p.chat, 'somestreamer')
+  assert.equal(p.goal, 'km:5')
+  assert.equal(p.since, '21:00')
+  assert.equal(p.size, '800x450')
+  assert.equal(p.mode, 'brb')
+  assert.equal(p.at, '20:30')
+  assert.equal(p.name, 'bHam Cam')
+  const bad = parseParams('?chat=x&goal=laps:3&since=soon&size=10x10&mode=party&at=25h')
+  assert.equal(bad.chat, '')
+  assert.equal(bad.goal, null)
+  assert.equal(bad.since, null)
+  assert.equal(bad.size, '640x360')
+  assert.equal(bad.mode, 'starting')
+  assert.equal(bad.at, null)
+  assert.equal(parseParams('?since=2026-11-09T21:00:00Z').since, '2026-11-09T21:00:00Z')
+})
+
+test('toQuery carries the companion options and leaves defaults out', () => {
+  const q = toQuery({ ...DEFAULTS, chat: 'somestreamer', goal: 'blocks:2', mode: 'brb', name: 'Ham Cam' })
+  assert.equal(q, '?chat=somestreamer&goal=blocks%3A2&mode=brb&name=Ham%20Cam')
+  assert.equal(toQuery({ ...DEFAULTS }), '')
 })
