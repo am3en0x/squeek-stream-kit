@@ -1,36 +1,45 @@
 # Publishing Squeek Stream Kit through IMD
 
-The kit is a finished static site in `dist/`. IMD is asked to check it and host it. The wallet that pays for the first
-job owns the IMD project, so pay from the wallet verified on your Squeekchain Genesis profile.
+The site in `dist/` is static and talks only to Squeekchain's public API (and, when a streamer asks for it, to Twitch
+chat read-only). IMD hosts it as is.
 
-## Cost
+On explorer.imd.fun/launch: **Website**, then start from GitHub with `https://github.com/am3en0x/squeek-stream-kit`.
+IMD finds `dist/index.html` itself. 0.5 IMD from the Genesis-verified wallet. After hosting, the Code Lane form takes
+the **Direct submission** tab (the IMD job hosts, it does not build), with the repository, the live URL and the text
+below.
 
-One job is 0.5 IMD on Ethereum mainnet (`0xd34a99bc0f67ae1bbd63c660e6d0b0dd03e263b7`, on Uniswap, linked from
-[imd.fun/token](https://imd.fun/token)). The page pays with x402 and Permit2: two signatures and, the first time, one
-approval transaction in ETH.
+## Display name
 
-## On the launch page
+Squeek Stream Kit
 
-[explorer.imd.fun/launch](https://explorer.imd.fun/launch): **Website**, then start from GitHub.
+## One line
 
-- Repository: `https://github.com/am3en0x/squeek-stream-kit`. IMD's import reads the latest commit on `main` and finds
-  the static export in `dist/` with no build step (`site.build: false`, `exportDir: "dist"`).
-- Paste the text below as what the site should do.
-- IMD runs a content check on the site before it pins it to IPFS and names it.
+Overlays and a viewer game for Squeekchain streams: Squeektoshi's wheel on an LED board, alerts, a round ticker, goals,
+scenes, and Round Call, where your chat calls what the hamster does next round and the real wheel settles it.
 
-Text for the page:
+## Description
 
-```
-Host Squeek Stream Kit from this repository as it is: a static site in dist/ with no build step. It is a free kit of
-OBS and Streamlabs browser-source overlays for Squeekchain streams: an LED board of Squeektoshi's wheel (state,
-today's distance, speed, Squeek block and progress, a wheel turning at his real RPM), alerts for wake-ups, naps,
-zoomies, blocks found, top speeds, distance milestones, streaks and merges, a lower-third ticker with the 600-second
-round clock and the latest events, a second-screen page for phones, and a setup page that builds the overlay links
-with live previews. All data comes from Squeekchain's public API (api.squeekchain.com/v1: status every 5 s, the event
-feed every 15 s, core once), read in the browser; there is no server, key, wallet, transaction or analytics.
-Checks: npm test (35 unit tests, node --test). Do not change the pages; publish dist/ as is.
-```
+Squeek Stream Kit puts Squeektoshi on any stream. Browser sources for OBS and Streamlabs, free, no account, no key:
+an LED dot-matrix board of his wheel that turns at his real RPM, alerts when he wakes up, gets the zoomies, sets a
+record or a Squeek block is found, a lower-third ticker with the round clock and the latest Squeekchain events, a
+stream goal bar (distance, blocks or minutes running), a cam frame whose rim runs at his pace, and starting/BRB/ending
+scenes with the live wheel.
 
-## If IMD cannot host the site
+Round Call is the game: every Squeekchain round is 10 minutes, and during one round viewers call what Squeektoshi does
+in the next (nap, jog or zoomies). The kit's own readings of that round settle it: points, streaks, and on Twitch a
+read-only chat link where !nap, !jog and !zoomies are tallied on the overlay with the result and the stream's top
+callers. Viewers without Twitch play on the second-screen page or the watch page, which plays Squeekchain's own
+livestream with the overlays on top.
 
-The same `dist/` is served from GitHub Pages (`gh-pages` branch). Any static host works.
+Everything reads the public API (/status every 5 s, /events every 15 s, /core once) in the viewer's own browser.
+Static site, MIT, 58 tests. Not affiliated with Squeekchain or Twitch.
+
+## Category
+
+Stream companions and overlays.
+
+## Links
+
+- Live: the IMD site URL and https://am3en0x.github.io/squeek-stream-kit/
+- Source: https://github.com/am3en0x/squeek-stream-kit
+- Headline image: `docs/card-headline.png` (to be drawn on the board's 64 x 36 dot grid)
