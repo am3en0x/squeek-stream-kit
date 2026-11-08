@@ -5,6 +5,7 @@ import { startSource } from './source.js'
 import { roundAt, clock } from './rounds.js'
 import { Led } from './led.js'
 import { drawFull } from './boardview.js'
+import { createCallPanel } from './callpanel.js'
 
 // The second screen: the board, the round clock and the feed, for a phone next to the stream.
 const opts = parseParams(location.search)
@@ -13,6 +14,7 @@ const accent = THEMES[opts.theme]
 const led = new Led(document.getElementById('led'))
 const wheel = createWheel({ zoomiesKmh: opts.zoomies, napMs: opts.demo ? 20_000 : 180_000 })
 const feedList = document.getElementById('feed')
+const panel = createCallPanel(document.getElementById('callpanel'), { zoomies: opts.zoomies, demo: opts.demo })
 let reading = null
 let core = null
 let turn = 0
@@ -48,8 +50,8 @@ function tickClock() {
 }
 
 startSource({ demo: opts.demo }, {
-  core(c) { core = c; tickClock() },
-  status(r) { wheel.push(r); if (r.online) reading = r },
+  core(c) { core = c; tickClock(); panel.core(c) },
+  status(r) { wheel.push(r); if (r.online) reading = r; panel.status(r) },
   events(list) { events = list; drawFeed() },
 })
 setInterval(tickClock, 1000)

@@ -1,6 +1,8 @@
 import { parseParams, toQuery } from './params.js'
 import { parseStream, fromParams, embedUrl, streamQuery } from './embed.js'
 import { mount } from './frames.js'
+import { createCallPanel } from './callpanel.js'
+import { startSource } from './source.js'
 
 // The watch page: Squeekchain's livestream in a 16:9 screen, the board and the alerts on top of it (they let clicks
 // through to the player), the ticker under it. The stream comes from ?youtube= / ?twitch= / ?x= or a pasted link.
@@ -65,3 +67,7 @@ $('sound').addEventListener('click', () => {
 })
 
 show(fromParams(location.search))
+
+// Round Call for the viewer, under the screen
+const panel = createCallPanel($('callpanel'), { zoomies: opts.zoomies, demo: opts.demo })
+if (!opts.demo) startSource({}, { core(c) { panel.core(c) }, status(r) { panel.status(r) } })
