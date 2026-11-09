@@ -243,7 +243,7 @@ export function clock(seconds) {
 }
 ```
 
-Copy the fonts: `cp C:/Users/user/squeek-odometer/dist/fonts/* dist/fonts/`.
+Add the fonts: IBM Plex Mono 400 and 500 and Barlow Condensed 700 as woff2 (both under the SIL Open Font License) into `dist/fonts/`.
 
 - [ ] **Step 4: Run the tests** — `npm test`, expected: all pass.
 - [ ] **Step 5: Commit** — `git add -A && git commit -m "Add URL options, round clock and project scaffold"`.
