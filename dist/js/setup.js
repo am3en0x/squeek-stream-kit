@@ -7,7 +7,7 @@ const OVERLAYS = [
   { id: 'board', group: 'overlays', name: 'LED board', page: 'board.html', w: 880, h: 528, note: 'A corner of your scene.' },
   { id: 'strip', group: 'overlays', name: 'LED strip', page: 'board.html', extra: { layout: 'strip' }, w: 890, h: 100, note: 'A slim bar for the top or bottom.' },
   { id: 'alerts', group: 'overlays', name: 'Alerts', page: 'alerts.html', w: 1000, h: 150, note: 'Empty until something happens.' },
-  { id: 'ticker', group: 'overlays', name: 'Ticker', page: 'ticker.html', w: 1920, h: 72, note: 'The round clock and the latest events.' },
+  { id: 'ticker', group: 'overlays', name: 'Ticker', page: 'ticker.html', params: ['font'], w: 1920, h: 72, note: 'The round clock and the latest events.' },
   { id: 'call', group: 'companion', name: 'Round Call', page: 'call.html', params: ['chat'], w: 1056, h: 300, note: "The next round to call, the chat's tally, the result and the top callers.", demo: { chat: 'hamcam' } },
   { id: 'goal', group: 'companion', name: 'Stream goal', page: 'goal.html', params: ['goal', 'since'], w: 1000, h: 200, note: 'Fills as the session gets there; a tune when it does.' },
   { id: 'frame', group: 'companion', name: 'Cam frame', page: 'frame.html', params: ['name', 'size'], size: true, note: 'Put your camera behind it. The rim runs at his pace.' },
@@ -20,6 +20,7 @@ const GENERAL = ['theme', 'alerts', 'zoomies', 'sound', 'vol', 'dur', 'demo']
 const base = new URL('.', location.href).href
 const opts = { ...DEFAULTS, alerts: [...DEFAULTS.alerts] }
 const $ = (id) => document.getElementById(id)
+const fontLed = () => /** @type {HTMLInputElement} */ ($('fontLed'))
 
 for (const slot of document.querySelectorAll('#hero-stage .slot')) mount(slot, slot.dataset.src, Number(slot.dataset.w), Number(slot.dataset.h))
 
@@ -45,10 +46,11 @@ const cards = OVERLAYS.map((o) => {
   el.className = 'out'
   el.innerHTML = `
     <div class="out-head"><h3>${o.name}</h3><span class="fine"><span data-size></span> ${o.note}</span></div>
+    ${o.id === 'ticker' ? '<div class="chips"><label class="chip"><input type="checkbox" id="fontLed"><span>LED font</span></label><span class="fine">The events in the board\'s dot letters.</span></div>' : ''}
     <div class="stage fit"><div class="slot"></div></div>
     <div class="url"><input readonly aria-label="${o.name} link"><button class="btn small" type="button" data-copy>Copy</button>${o.id === 'alerts' ? '<button class="btn small" type="button" data-test>Test alert</button>' : ''}</div>`
   $('outputs-' + o.group).append(el)
-  return { o, el, input: el.querySelector('input'), slot: el.querySelector('.slot'), sizeEl: el.querySelector('[data-size]'), frame: null }
+  return { o, el, input: /** @type {HTMLInputElement} */ (el.querySelector('.url input')), slot: el.querySelector('.slot'), sizeEl: el.querySelector('[data-size]'), frame: null }
 })
 
 function sizeOf(o) {
@@ -120,10 +122,12 @@ function fillForm() {
   $('name').value = opts.name
   $('size').value = opts.size
   $('at').value = opts.at || ''
+  fontLed().checked = opts.font === 'led'
   if (!opts.goal) opts.goal = `${$('goalKind').value}:${$('goalN').value}`
 }
 
 $('form').addEventListener('input', readForm)
+fontLed().addEventListener('change', () => { opts.font = fontLed().checked ? 'led' : DEFAULTS.font; refresh() })
 document.querySelector('.outputs').addEventListener('click', async (e) => {
   const card = cards.find((c) => c.el.contains(e.target))
   if (!card) return

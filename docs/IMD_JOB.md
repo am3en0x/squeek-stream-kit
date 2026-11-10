@@ -21,7 +21,7 @@ scenes, and Round Call, where your chat calls what the hamster does next round a
 
 Squeek Stream Kit puts Squeektoshi on any stream. Browser sources for OBS and Streamlabs, free, no account, no key:
 an LED dot-matrix board of his wheel that turns at his real RPM, alerts when he wakes up, gets the zoomies, sets a
-record or a Squeek block is found, a lower-third ticker with the round clock and the latest Squeekchain events, a
+record or a Squeek block is found, a lower-third ticker with the round clock and the latest Squeekchain events (in text or in the board's LED letters), a
 stream goal bar (distance, blocks or minutes running), a cam frame whose rim runs at his pace, and starting/BRB/ending
 scenes with the live wheel.
 
@@ -32,7 +32,7 @@ callers. Viewers without Twitch play on the second-screen page or the watch page
 livestream with the overlays on top.
 
 Everything reads the public API (/status every 5 s, /events every 15 s, /core once) in the viewer's own browser.
-Static site, MIT, 58 tests. Not affiliated with Squeekchain or Twitch.
+Static site, MIT, 63 tests. Not affiliated with Squeekchain or Twitch.
 
 ## Category
 

@@ -45,6 +45,8 @@ html.overlay, html.overlay body { margin: 0; background: transparent; overflow: 
 .ticker .track { display: inline-flex; white-space: nowrap; animation: scroll linear infinite; animation-duration: 60s; }
 .ticker .item { font-size: 34vh; color: var(--text); padding-right: 4em; }
 .ticker .item b { color: var(--accent); font-weight: 500; margin-right: 0.7em; }
+.ticker .item.led { padding-right: 0; line-height: 0; }
+.ticker .item.led canvas { display: block; }
 @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .ticker .track { animation: none; } }
 
@@ -109,6 +111,7 @@ code { background: #141418; color: var(--ink); padding: 1px 5px; border-radius: 
 .stage.fit { aspect-ratio: auto; padding: 5% 4%; }
 .stage.fit .slot { position: relative; }
 .out { border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+.out > .chips { align-items: center; }
 .out-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; }
 .url { display: flex; gap: 8px; }
 .url input { flex: 1; min-width: 0; height: 36px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 6px; background: #0b0b0e; color: var(--text); font: 400 12px var(--font-mono); }
@@ -144,7 +147,13 @@ td:first-child { color: var(--ink); white-space: nowrap; }
   h1 { font-size: 44px; }
   h2 { font-size: 32px; }
   .block { padding: 56px 0; }
-  .hero { padding: 40px var(--gutter) 56px; }
+  .hero { padding: 32px var(--gutter) 56px; gap: 0; }
+  /* on a phone the overlays and the main button come straight after the headline, the explainer under them */
+  .hero > div:first-child { display: contents; }
+  .hero h1 { margin-bottom: 20px; }
+  .hero .stage { order: 3; }
+  .hero .actions { order: 4; margin-top: 20px; }
+  .hero .lead { order: 5; margin: 24px 0 0; }
 }
 
 /* ---------------------------------------------------------------- the watch page: the stream with the overlays on top */

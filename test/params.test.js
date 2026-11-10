@@ -7,7 +7,7 @@ test('defaults', () => {
   assert.deepEqual(p, {
     theme: 'amber', layout: 'full', alerts: ['wake', 'nap', 'zoomies', 'block', 'record', 'distance', 'streak'],
     zoomies: 4.5, sound: true, vol: 60, dur: 6, demo: false,
-    chat: '', goal: null, since: null, size: '640x360', mode: 'starting', at: null, name: '',
+    chat: '', goal: null, since: null, size: '640x360', mode: 'starting', at: null, name: '', font: 'regular',
   })
 })
 

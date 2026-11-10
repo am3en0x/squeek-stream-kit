@@ -21,6 +21,7 @@ Browser Source) at the size shown. Every overlay page is transparent except the 
 | LED strip | `board.html?layout=strip` | 890 × 100 | the same in two lines, for the top or bottom of the scene |
 | Alerts | `alerts.html` | 1000 × 150 | one alert card at a time, with a pictogram and a short chiptune, then nothing |
 | Ticker | `ticker.html` | 1920 × 72 | the round clock and the latest Squeekchain events, scrolling |
+| Ticker, LED font | `ticker.html?font=led` | 1920 × 72 | the same ticker with the events drawn in the board's dot-matrix letters, at the clock's dot size |
 | Round Call | `call.html` | 1056 × 300 | the round to call, the chat's tally, the result, the top callers |
 | Stream goal | `goal.html` | 1000 × 160 | a bar towards `km:5`, `blocks:2` or `run:30` minutes; a tune when reached |
 | Cam frame | `frame.html` | `size`, 640 × 360 by default | LED dots around your camera, a runner chasing round at his pace, a name plate with his state |
@@ -84,6 +85,7 @@ after two minutes, no wheel alerts fire, and Round Call rounds are void.
 | `name` | up to 24 characters on the cam frame plate | none | frame |
 | `mode` | `starting`, `brb`, `ending` | `starting` | scene |
 | `at` | `HH:MM` UTC: a countdown on the starting scene | none | scene |
+| `font` | `regular`, `led`: the ticker's events in the board's dot-matrix font | `regular` | ticker |
 | `demo` | `1`: sample data, 90-second rounds and a chat that calls, for placing sources while he sleeps | off | all |
 
 ## Second screen
@@ -117,15 +119,38 @@ localStorage (their Round Call score).
 
 ## Run it
 
+There is nothing to install and nothing to build: `dist/` is the site and its source, plain ES modules, CSS and
+fonts with relative URLs, so it works from any folder, an IPFS gateway path or an ENS name. The tests need Node 18 or
+newer and no packages (`package.json` has no dependencies, so there is no lockfile).
+
 ```sh
-npm test                      # 58 tests: rules, parsing, the round machine, Round Call, chat, sessions, goals
-python -m http.server 8771 -d dist   # then open http://localhost:8771/ (ES modules need http, not file://)
+npm test                              # 63 tests: rules, parsing, the round machine, Round Call, chat, sessions, goals, the LED ticker
+python3 -m http.server 8771 -d dist   # preview at http://localhost:8771/ (ES modules need http, not file://)
 ```
 
-`dist/` is the whole site; host it anywhere static. Layout: `dist/js/params.js` options; `api.js`, `source.js` the
-pollers; `wheel.js` the wheel's phases; `feed.js` events to cards and lines; `calls.js` Round Call; `chat.js` Twitch;
-`session.js`, `goals.js`; `led.js` the dot-matrix renderer with the font and pictograms; `boardview.js` the board
-layouts; one `*.js` per page. Design notes in `docs/superpowers/specs/`.
+To rebuild, edit the files in `dist/` and run `npm test`; what is in `dist/` is what gets hosted. Layout:
+`dist/js/params.js` options; `api.js`, `source.js` the pollers; `wheel.js` the wheel's phases; `feed.js` events to cards
+and lines; `calls.js` Round Call; `chat.js` Twitch; `session.js`, `goals.js`; `led.js` the dot-matrix renderer with the
+font and pictograms; `tickerled.js` the ticker's LED items; `boardview.js` the board layouts; one `*.js` per page.
+Design notes in `docs/superpowers/specs/` and `DESIGN.md`.
+
+### Checks run for the LED ticker (2026-11-10)
+
+- `npm test`: 63 tests, 63 pass. `test/ticker.test.js` covers `font=led` parsing and fallbacks, `toQuery` and the
+  round trip, `ledSafe()` on every demo line, and the LED item layout and colors.
+- Typecheck: no TypeScript in the project, so `tsc --allowJs --checkJs --noEmit` (TypeScript 5.9.3, via `npx`, nothing
+  added to the repository) over `led.js`, `tickerled.js`, `ticker.js`, `params.js` and `setup.js`: no errors in the
+  changed and new modules; 45 errors in `setup.js`, the same 45 as the previous commit (untyped DOM lookups).
+- Headless Chromium (Playwright) on `dist/`, served under a `/preview/` subpath: the ticker without `font` has the
+  same DOM and a byte-identical screenshot of its scrolling lane as the previous commit (reduced motion, 1920 × 72); with `font=led` every
+  item is a labelled canvas as tall as the round clock, with lit dots, following a resize; no console errors or failed
+  loads. On the setup page the "LED font" box in the Ticker card adds `font=led` to the ticker link and its preview
+  only, works from the keyboard, combines with the LED color, comes off again, and is read back from `index.html?font=led`.
+  No horizontal scroll at 320, 390 and 1440; at 320 and 390 the overlay preview and "Get your overlay links" are on the
+  first screen.
+- The design probe (`taste.mjs`) and the Better Interface review are recorded in `artifacts/validation.md`.
+- Not done: WebKit (Safari) would not launch on the build machine (missing system libraries), and OBS itself was not
+  run; no screen-reader session.
 
 ## License
 

@@ -2,6 +2,7 @@
 export const ALERT_KINDS = ['wake', 'nap', 'zoomies', 'block', 'record', 'distance', 'streak', 'merge']
 export const THEMES = { amber: '#f6a63b', green: '#7fe08a', ice: '#7fdcff', white: '#f3e9cc' }
 export const SCENES = ['starting', 'brb', 'ending']
+export const FONTS = ['regular', 'led']
 const CHANNEL = /^[a-z0-9_]{3,25}$/
 const GOAL = /^(km|blocks|run):\d+(\.\d+)?$/
 const CLOCK = /^\d{1,2}:\d{2}$/
@@ -22,6 +23,7 @@ export const DEFAULTS = Object.freeze({
   mode: 'starting',
   at: null,
   name: '',
+  font: /** @type {'regular' | 'led'} */ ('regular'),
 })
 
 export function parseParams(search) {
@@ -48,6 +50,7 @@ export function parseParams(search) {
     mode: pick('mode', SCENES),
     at: CLOCK.test(q.get('at') || '') ? q.get('at') : DEFAULTS.at,
     name: (q.get('name') || '').replace(/[<>]/g, '').trim().slice(0, 24),
+    font: pick('font', FONTS),
   }
 }
 
@@ -68,7 +71,7 @@ function parseAlerts(raw) {
 // The query string for these options with every default left out, for the setup page's links.
 export function toQuery(opts) {
   const out = []
-  for (const key of ['theme', 'layout', 'zoomies', 'vol', 'dur', 'chat', 'goal', 'since', 'size', 'mode', 'at', 'name']) {
+  for (const key of ['theme', 'layout', 'zoomies', 'vol', 'dur', 'chat', 'goal', 'since', 'size', 'mode', 'at', 'name', 'font']) {
     if (opts[key] !== undefined && opts[key] !== null && opts[key] !== '' && opts[key] !== DEFAULTS[key]) out.push(`${key}=${encodeURIComponent(opts[key])}`)
   }
   if (opts.sound === false) out.push('sound=0')

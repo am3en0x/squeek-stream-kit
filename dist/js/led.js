@@ -48,6 +48,8 @@ export const FONT = {
   '#': ['01010', '01010', '11111', '01010', '11111', '01010', '01010'],
   '%': ['11001', '11010', '00010', '00100', '01000', '01011', '10011'],
   ' ': ['00', '00', '00', '00', '00', '00', '00'],
+  // a small x for the 0x of an address in the LED ticker
+  x: ['00000', '00000', '10001', '01010', '00100', '01010', '10001'],
 }
 
 
@@ -72,6 +74,21 @@ export const ICONS = {
 
 const glyph = (ch) => FONT[ch] || FONT[' ']
 
+// Any text made printable in the LED font: capitals, an ellipsis as three dots, the 0x of an address kept small,
+// dashes and middle dots as a hyphen, anything else the font lacks as a space.
+export function ledSafe(s) {
+  return String(s)
+    .toUpperCase()
+    .replace(/…/g, '...')
+    .replace(/[–—·•]/g, '-')
+    .replace(/\b0X(?=[0-9A-F])/g, '0x')
+    .split('')
+    .map((ch) => (FONT[ch] ? ch : ' '))
+    .join('')
+    .replace(/ {2,}/g, ' ')
+    .trim()
+}
+
 export function textWidth(s, k = 1) {
   let w = 0
   for (const ch of String(s)) w += (glyph(ch)[0].length + 1) * k
@@ -79,11 +96,15 @@ export function textWidth(s, k = 1) {
 }
 
 export class Led {
-  constructor(canvas, { off = '#16161b', fit = 'width' } = {}) {
+  // fit: 'width' or 'contain' sizes the dots to the parent's content box; pitch (CSS px per dot) fixes them instead,
+  // and the canvas takes the grid's size. dotPitch is the pitch of the last paint.
+  constructor(canvas, { off = '#16161b', fit = 'width', pitch = 0 } = {}) {
     this.canvas = canvas
     this.ctx = canvas.getContext('2d')
     this.off = off
     this.fit = fit
+    this.pitch = pitch
+    this.dotPitch = 0
     this.cols = 0
     this.rows = 0
     this.cells = []
@@ -156,14 +177,18 @@ export class Led {
   paint() {
     const { canvas, ctx, cols, rows } = this
     if (!cols || !rows) return
-    // the parent's content box: its client size without padding
-    const parent = canvas.parentElement
-    const cs = getComputedStyle(parent)
-    const bw = parent.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
-    const bh = parent.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)
-    let pitch = bw / cols
-    if (this.fit === 'contain' && bh > 0) pitch = Math.min(pitch, bh / rows)
+    let pitch = this.pitch
+    if (!pitch) {
+      // the parent's content box: its client size without padding
+      const parent = canvas.parentElement
+      const cs = getComputedStyle(parent)
+      const bw = parent.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
+      const bh = parent.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)
+      pitch = bw / cols
+      if (this.fit === 'contain' && bh > 0) pitch = Math.min(pitch, bh / rows)
+    }
     if (!(pitch > 0)) return
+    this.dotPitch = pitch
     const cw = Math.floor(cols * pitch)
     const ch = Math.floor(rows * pitch)
     const dpr = window.devicePixelRatio || 1
